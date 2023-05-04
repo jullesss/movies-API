@@ -14,7 +14,7 @@ const createMovieController = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const movieData: TMovieRequest = res.locals.data;
+  const movieData: TMovieRequest = req.body;
 
   const newMovie = await createMovieService(movieData);
 
@@ -25,17 +25,7 @@ const listMoviesController = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const page: number = Number(req.query.page);
-  const perPage: number = Number(req.query.perPage);
-  const sort: any = req.query.sort;
-  const order: any = req.query.order;
-
-  const movies: TMoviesPagination = await listMoviesService(
-    page,
-    perPage,
-    sort,
-    order
-  );
+  const movies: TMoviesPagination = await listMoviesService(req);
 
   return res.status(200).json(movies);
 };

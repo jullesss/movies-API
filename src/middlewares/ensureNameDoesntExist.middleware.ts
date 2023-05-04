@@ -11,7 +11,21 @@ const ensureNameDoesntExist = async (
 ) => {
   const movieRepository: Repository<Movie> = AppDataSource.getRepository(Movie);
 
-  if (req.method === "PATCH" || "DELETE") {
+  if (req.body.name) {
+    const findMovieName: Movie | null = await movieRepository.findOne({
+      where: {
+        name: req.body.name,
+      },
+    });
+
+    if (findMovieName) {
+      throw new AppError("Movie already exists.", 409);
+    }
+  }
+
+  return next();
+
+  /* if (req.method === "PATCH" || "DELETE") {
     const findMovie: Movie | null = await movieRepository.findOne({
       where: {
         id: Number(req.params.id),
@@ -25,7 +39,7 @@ const ensureNameDoesntExist = async (
 
   const findMovieName: Movie | null = await movieRepository.findOne({
     where: {
-      name: res.locals.data.name,
+      name: req.body.name,
     },
   });
 
@@ -33,7 +47,7 @@ const ensureNameDoesntExist = async (
     throw new AppError("Movie already exists.", 409);
   }
 
-  return next();
+  return next(); */
 };
 
 export default ensureNameDoesntExist;

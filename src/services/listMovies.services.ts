@@ -7,15 +7,17 @@ import {
 import { Movie } from "../entities";
 import { AppDataSource } from "../data-source";
 import { listMoviesSchemaResponse } from "../schemas/movies.schema";
+import { Request } from "express";
 
-const listMoviesService = async (
-  page: number,
-  perPage: number,
-  sort: any,
-  order: any
-): Promise<TMoviesPagination> => {
+const listMoviesService = async (req: Request): Promise<TMoviesPagination> => {
   const moviesRepository: Repository<Movie> =
     AppDataSource.getRepository(Movie);
+
+  let page: number = Number(req.query.page);
+  let perPage: number = Number(req.query.perPage) || 5;
+  let sort: any = req.query.sort;
+  let order: any =
+    req.query.order === "desc" ? req.query.order.toUpperCase() : "ASC";
 
   let movies: Movie[] | undefined;
 
@@ -23,32 +25,25 @@ const listMoviesService = async (
     perPage = 5;
   }
 
-  if (page < 0) {
+  if (page < 1 || page < 0) {
     page = 1;
   }
 
-  let sortBy = sort;
-  let orderObj = {};
-
-  if (sortBy === "price") {
-    orderObj = {
-      price: order,
-    };
-  } else if (sortBy === "duration") {
-    orderObj = {
-      duration: order,
-    };
+  if (sort !== "price" && sort !== "duration") {
+    (sort = "id"), (order = "ASC");
   }
 
-  if (!page || !perPage) {
+  console.log(order);
+  /*   if (!page || !perPage) {
     movies = await moviesRepository.find();
-  } else {
-    movies = await moviesRepository.find({
-      skip: (page - 1) * perPage,
-      take: perPage,
-      order: orderObj || "asc",
-    });
-  }
+  } else { */
+  movies = await moviesRepository.find({
+    skip: (page - 1) * perPage,
+    take: perPage,
+    order: {
+      [sort]: order,
+    },
+  });
 
   const returnMovies: TListMoviesResponse =
     listMoviesSchemaResponse.parse(movies);
