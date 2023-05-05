@@ -9,8 +9,8 @@ const listMoviesService = async (req: any): Promise<TMoviesPagination> => {
 
   let page: number = Number(req.page);
   let perPage: number = Number(req.perPage);
-  let sort: any = req.sort;
-  let order: any = req.order === "desc" ? req.order.toUpperCase() : "ASC";
+  let sort: string = req.sort;
+  let order: string = req.order === "desc" ? req.order.toUpperCase() : "ASC";
 
   if (perPage < 1 || perPage > 5 || isNaN(perPage)) {
     perPage = 5;
