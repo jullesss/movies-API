@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import {
-  TListMoviesResponse,
   TMovieRequest,
   TMoviesPagination,
   TUpdateMovieRequest,
@@ -25,7 +24,7 @@ const listMoviesController = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const movies: TMoviesPagination = await listMoviesService(req);
+  const movies: TMoviesPagination = await listMoviesService(req.query);
 
   return res.status(200).json(movies);
 };
@@ -48,7 +47,7 @@ const deleteMovieController = async (
   const movieId: number = Number(req.params.id);
   await deleteMovieService(movieId);
 
-  return res.status(204);
+  return res.status(204).send();
 };
 
 export {

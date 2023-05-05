@@ -4,26 +4,24 @@ import { Movie } from "../entities";
 import { AppDataSource } from "../data-source";
 import { AppError } from "../error";
 
-const ensureNameDoesntExist = async (
+const ensureIdExists = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   const movieRepository: Repository<Movie> = AppDataSource.getRepository(Movie);
 
-  if (req.body.name) {
-    const findMovieName: Movie | null = await movieRepository.findOne({
-      where: {
-        name: req.body.name,
-      },
-    });
+  const findMovie: Movie | null = await movieRepository.findOne({
+    where: {
+      id: Number(req.params.id),
+    },
+  });
 
-    if (findMovieName) {
-      throw new AppError("Movie already exists.", 409);
-    }
+  if (!findMovie) {
+    throw new AppError("Movie not found", 404);
   }
 
   return next();
 };
 
-export default ensureNameDoesntExist;
+export default ensureIdExists;

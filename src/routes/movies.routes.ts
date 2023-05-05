@@ -11,6 +11,7 @@ import {
 } from "../schemas/movies.schema";
 import ensureDataIsValidMiddleware from "../middlewares/ensureDataIsValid.middleware";
 import ensureNameDoesntExist from "../middlewares/ensureNameDoesntExist.middleware";
+import ensureIdExists from "../middlewares/ensureIdExists.middleware";
 
 const moviesRoutes: Router = Router();
 
@@ -26,10 +27,11 @@ moviesRoutes.get("", listMoviesController);
 moviesRoutes.patch(
   "/:id",
   ensureDataIsValidMiddleware(updateSchemaRequest),
+  ensureIdExists,
   ensureNameDoesntExist,
   updateMovieController
 );
 
-moviesRoutes.delete("/:id", ensureNameDoesntExist, deleteMovieController);
+moviesRoutes.delete("/:id", ensureIdExists, deleteMovieController);
 
 export default moviesRoutes;

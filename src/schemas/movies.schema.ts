@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const movieSchema = z.object({
   id: z.number(),
-  name: z.string(),
+  name: z.string().max(50),
   description: z.string().nullable().optional(),
   duration: z.number().int().positive(),
   price: z.number().int().positive(),
